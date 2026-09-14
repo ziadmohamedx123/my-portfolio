@@ -154,15 +154,13 @@ p { text-wrap: pretty; }
 
 ::selection { background: var(--color-accent); color: #10151B; }
 
-/* Subtle themed page scrollbar */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--color-bg-deep); }
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 6px;
-  border: 2px solid var(--color-bg-deep);
-}
-::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
+/* Page scrollbar: hidden on purpose — no bar, no gutter, no arrows.
+   Wheel / trackpad / touch / keyboard scrolling and the scroll-spy
+   all still work. Only the standard property is used (no vendor
+   scrollbar prefixes anywhere in this file): supported by Firefox,
+   Edge, Chromium 121+ (Chrome/Edge from Jan 2024) and Safari 18.2+.
+   Scrolling containers below opt into the same treatment individually. */
+html, body { scrollbar-width: none; }
 
 /* -------------------------------------------------------------
    3. ACCESSIBILITY
@@ -336,14 +334,12 @@ main > section:not(.hero) { padding-block: clamp(var(--space-10), 10vw, var(--sp
   min-width: 0;
   gap: clamp(var(--space-4), 2.4vw, var(--space-8));
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border-strong) transparent;
+  /* The strip must stay scrollable but must never paint a scrollbar:
+     overflow-x:auto also promotes the y-axis to a scroll container, so
+     hide BOTH axes with the standard property — this is what prevented
+     the stray pill from appearing next to “Contact” on narrow widths. */
+  scrollbar-width: none;
 }
-.nav-links::-webkit-scrollbar { height: 4px; }
-.nav-links::-webkit-scrollbar-track { background: transparent; }
-.nav-links::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 2px; }
-.nav-links::-webkit-scrollbar-thumb:hover { background: var(--color-accent-dim); }
 .nav-links li { flex-shrink: 0; }
 
 .nav-link {
