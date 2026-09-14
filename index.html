@@ -3,28 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-en="Ziad Mohamed | SQA Engineer & Robotics Developer" data-ar="زياد محمد | مهندس ضمان جودة ومطور روبوتات">Ziad Mohamed | SQA Engineer & Robotics Developer</title>
-  <meta name="description"
-        content="Portfolio of Ziad Mohamed, a Software Quality Assurance Engineer and Robotics Developer specializing in test automation and ROS 2-based robotic systems."
-        data-en="Portfolio of Ziad Mohamed, a Software Quality Assurance Engineer and Robotics Developer specializing in test automation and ROS 2-based robotic systems."
-        data-ar="الموقع الشخصي لزياد محمد، مهندس ضمان جودة البرمجيات ومطور روبوتات متخصص في أتمتة الاختبارات وأنظمة الروبوتات القائمة على ROS 2.">
+  <meta name="theme-color" content="#0A1420">
 
-  <!-- Google Fonts: Poppins (Latin) + Tajawal (Arabic) -->
+  <title data-en="Ziad Mohamed | SQA Engineer &amp; Robotics Developer" data-ar="زياد محمد | مهندس ضمان جودة البرمجيات ومطور روبوتات">Ziad Mohamed | SQA Engineer &amp; Robotics Developer</title>
+
+  <meta name="description"
+        content="Portfolio of Ziad Mohamed — Software Quality Assurance Engineer and Robotics Developer. B.Sc. undergraduate in Robotics & Mechatronics Engineering at Helwan National University, skilled in ROS 2, C++, Python, Selenium, Appium and PyTest."
+        data-en="Portfolio of Ziad Mohamed — Software Quality Assurance Engineer and Robotics Developer. B.Sc. undergraduate in Robotics & Mechatronics Engineering at Helwan National University, skilled in ROS 2, C++, Python, Selenium, Appium and PyTest."
+        data-ar="الموقع الشخصي لبشمهندس زياد محمد — مهندس ضمان جودة البرمجيات ومطور روبوتات. طالب بكالوريوس هندسة الروبوتات والميكاترونكس بجامعة حلوان الأهلية، متمرّس في ROS 2 وC++ وPython وSelenium وAppium وPyTest.">
+
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="Ziad Mohamed | SQA Engineer & Robotics Developer">
+  <meta property="og:description" content="Bilingual portfolio — test automation, robotics and mechatronics projects.">
+  <meta property="og:image" content="assets/images/profile.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Custom stylesheet (Step 2) -->
   <link rel="stylesheet" href="style.css">
+
+  <!--
+    DEPLOYMENT NOTES
+    ================
+    1. This file is a drop-in rewrite of the page body. It reuses every class/id
+       contract of style.css and script.js — NO changes needed in either file.
+       script.js hooks kept intact: #header, #nav-links, #menu-toggle,
+       .lang-btn[data-lang], [data-en]/[data-ar] leaf-text swapping,
+       #contact-form + button[type="submit"], main section[id] scroll-spy.
+    2. Required assets (relative paths):
+         assets/images/profile.jpg                     (959x1280 portrait)
+         assets/images/projects/robot-1.jpg            (720x1280)
+         assets/images/projects/robot-2.jpg            (720x1280)
+         assets/Ziad-Mohamed-CV.pdf                    (CV download target)
+    3. The project lightbox is PURE CSS (:target) + a 3-line inline Escape
+       handler — it works with zero JS and cannot conflict with script.js.
+    4. Elements carrying data-en/data-ar are leaf nodes on purpose: script.js
+       sets textContent, so never nest other elements inside them.
+  -->
+  <style>
+    /* ===== Page-scoped components (hero portrait, project gallery, lightbox) =====
+       Everything else inherits from style.css. Scoped selectors only — no global
+       element rules, no navbar rules, nothing that can bleed into other sections. */
+
+    .skip-link {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-start: var(--space-4);
+      z-index: 130;
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-accent);
+      color: #10151B;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      transform: translateY(-120%);
+      transition: transform var(--transition-base);
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    /* Hero: two-column grid, portrait collapses above text on small screens */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+      align-items: center;
+    }
+    .hero-portrait {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center; /* keeps flex-stretch from overriding the img aspect */
+      justify-content: center;
+      order: -1;
+      animation: fade-up 700ms cubic-bezier(0.4, 0, 0.2, 1) 120ms both;
+    }
+    .hero-portrait img {
+      width: min(300px, 64vw);
+      height: auto;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center 22%;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%);
+    }
+    @media (min-width: 1024px) {
+      .hero-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
+      .hero-portrait { order: 0; }
+    }
+
+    /* Projects: gallery thumbs that double as lightbox triggers */
+    .project-gallery {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    @media (min-width: 640px) { .project-gallery { grid-template-columns: 1fr 1fr; } }
+    .project-media {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    .lightbox-trigger { display: block; position: relative; overflow: hidden; }
+    .lightbox-trigger img {
+      width: 100%;
+      height: clamp(210px, 28vw, 300px);
+      object-fit: cover;
+      object-position: center 62%;
+      transition: transform var(--transition-slow), filter var(--transition-base);
+      filter: saturate(0.92);
+    }
+    .lightbox-trigger:hover img,
+    .lightbox-trigger:focus-visible img { transform: scale(1.04); filter: saturate(1); }
+    .media-hint {
+      position: absolute;
+      inset-block-start: var(--space-2);
+      inset-inline-end: var(--space-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      background: rgba(10, 20, 32, 0.72);
+      color: var(--color-text);
+      font-size: var(--fs-xs);
+    }
+    .project-media figcaption {
+      padding: var(--space-2) var(--space-3);
+      border-block-start: 1px solid var(--color-border);
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--color-text-muted);
+    }
+
+    /* CSS-only lightbox: #id on the URL shows it, any other #anchor hides it */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      place-items: center;
+      padding: var(--space-6) var(--space-4);
+      background: rgba(4, 10, 18, 0.94);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition-base), visibility var(--transition-base);
+    }
+    .lightbox:target { opacity: 1; visibility: visible; }
+    .lightbox figure { max-width: min(920px, 94vw); text-align: center; }
+    .lightbox img {
+      width: auto;
+      max-width: 100%;
+      max-height: 76vh;
+      height: auto;
+      margin-inline: auto;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+    .lightbox figcaption {
+      margin-block-start: var(--space-3);
+      font-family: var(--font-mono);
+      font-size: var(--fs-sm);
+      color: var(--color-text-muted);
+    }
+    .lightbox-backdrop { position: absolute; inset: 0; cursor: zoom-out; }
+    .lightbox-close {
+      position: absolute;
+      inset-block-start: var(--space-4);
+      inset-inline-end: var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+      font-size: var(--fs-lg);
+      line-height: 1;
+      transition: border-color var(--transition-base), color var(--transition-base);
+    }
+    .lightbox-close:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-portrait, .lightbox-trigger img { animation: none; transition: none; }
+    }
+  </style>
 </head>
 <body>
 
+  <a class="skip-link" href="#home" data-en="Skip to content" data-ar="تخطَّ إلى المحتوى">Skip to content</a>
+
   <!-- ========== HEADER / NAVBAR ========== -->
   <header class="header" id="header">
-    <nav class="navbar container">
+    <nav class="navbar container" aria-label="Primary">
       <a href="#home" class="logo">Ziad<span class="logo-dot">.</span></a>
 
       <ul class="nav-links" id="nav-links">
@@ -37,11 +220,11 @@
       </ul>
 
       <div class="nav-actions">
-        <div class="lang-switch" id="lang-switch">
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language / اللغة">
           <button class="lang-btn active" data-lang="en" type="button">EN</button>
           <button class="lang-btn" data-lang="ar" type="button">AR</button>
         </div>
-        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false" type="button">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-haspopup="true" aria-expanded="false" aria-controls="nav-links" type="button">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -51,24 +234,35 @@
   <main>
     <!-- ========== HERO ========== -->
     <section class="hero" id="home">
-      <div class="container hero-content">
-        <p class="hero-greeting" data-en="Hello, I'm" data-ar="مرحباً، أنا">Hello, I'm</p>
-        <h1 class="hero-name">Ziad Mohamed</h1>
-        <h2 class="hero-title" data-en="Software Quality Assurance Engineer &amp; Robotics Developer" data-ar="مهندس ضمان جودة البرمجيات ومطور روبوتات">Software Quality Assurance Engineer &amp; Robotics Developer</h2>
-        <p class="hero-field" data-en="Software Testing Automation | Robotics &amp; Mechatronics" data-ar="أتمتة اختبار البرمجيات | الروبوتات والميكاترونكس">Software Testing Automation | Robotics &amp; Mechatronics</p>
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <p class="hero-greeting" data-en="Hello, I'm" data-ar="مرحباً، أنا">Hello, I'm</p>
+            <h1 class="hero-name" data-en="Ziad Mohamed" data-ar="بشمهندس زياد محمد">Ziad Mohamed</h1>
+            <h2 class="hero-title" data-en="Software Quality Assurance Engineer &amp; Robotics Developer" data-ar="مهندس ضمان جودة البرمجيات ومطور روبوتات">Software Quality Assurance Engineer &amp; Robotics Developer</h2>
+            <p class="hero-field" data-en="Software Testing Automation | Robotics &amp; Mechatronics" data-ar="أتمتة اختبار البرمجيات | الروبوتات والميكاترونكس">Software Testing Automation | Robotics &amp; Mechatronics</p>
 
-        <div class="hero-buttons">
-          <a href="#contact" class="btn btn-primary" data-en="Contact Me" data-ar="تواصل معي">Contact Me</a>
-          <a href="assets/Ziad-Mohamed-CV.pdf" class="btn btn-secondary" id="download-cv" download data-en="Download CV" data-ar="تحميل السيرة الذاتية">Download CV</a>
-        </div>
+            <div class="hero-buttons">
+              <a href="#contact" class="btn btn-primary" data-en="Contact Me" data-ar="تواصل معي">Contact Me</a>
+              <a href="assets/Ziad-Mohamed-CV.pdf" class="btn btn-secondary" id="download-cv" download data-en="Download CV" data-ar="تحميل السيرة الذاتية">Download CV</a>
+            </div>
 
-        <div class="hero-socials">
-          <a href="https://www.linkedin.com/in/ziad-mohamed-elshahat" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <i class="fa-brands fa-linkedin-in"></i>
-          </a>
-          <a href="mailto:ziadelshahat70@gmail.com" aria-label="Email">
-            <i class="fa-solid fa-envelope"></i>
-          </a>
+            <div class="hero-socials">
+              <a href="https://linkedin.com/in/ziad-mohamed-elshahat" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <i class="fa-brands fa-linkedin-in"></i>
+              </a>
+              <a href="https://github.com/ziadmohamedx123/my-portfolio" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <i class="fa-brands fa-github"></i>
+              </a>
+              <a href="mailto:ziadelshahat70@gmail.com" aria-label="Email">
+                <i class="fa-solid fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-portrait">
+            <img src="assets/images/profile.jpg" alt="Portrait of Ziad Mohamed" width="959" height="1280" decoding="async">
+          </div>
         </div>
       </div>
 
@@ -84,19 +278,23 @@
 
         <div class="about-content">
           <p class="about-text"
-             data-en="An enthusiastic Robotics and Mechatronics Engineering student specializing in Software Quality Assurance (SQA) and Test Automation. I bridge the gap between reliable software testing and advanced robotics, with hands-on experience in building automated testing frameworks and developing ROS 2-based robotic systems."
-             data-ar="طالب متحمس في هندسة الروبوتات والميكاترونكس، متخصص في ضمان جودة البرمجيات (SQA) وأتمتة الاختبارات. أعمل على الربط بين اختبار البرمجيات الموثوق وتقنيات الروبوتات المتقدمة، ولدي خبرة عملية في بناء أطر عمل اختبار آلية وتطوير أنظمة روبوتية قائمة على ROS 2.">
-            An enthusiastic Robotics and Mechatronics Engineering student specializing in Software Quality Assurance (SQA) and Test Automation. I bridge the gap between reliable software testing and advanced robotics, with hands-on experience in building automated testing frameworks and developing ROS 2-based robotic systems.
+             data-en="A Robotics and Mechatronics Engineering undergraduate at Helwan National University, specializing in Software Quality Assurance (SQA) and Test Automation. I bridge reliable software testing with advanced robotics, with hands-on experience building automated testing frameworks and ROS 2-based robotic systems."
+             data-ar="طالب بكالوريوس في هندسة الروبوتات والميكاترونكس بجامعة حلوان الأهلية، متخصص في ضمان جودة البرمجيات (SQA) وأتمتة الاختبارات. أعمل على الربط بين اختبار البرمجيات الموثوق وتقنيات الروبوتات المتقدمة، ولديّ خبرة عملية في بناء أطر اختبار آلية وتطوير أنظمة روبوتية قائمة على ROS 2.">
+            A Robotics and Mechatronics Engineering undergraduate at Helwan National University, specializing in Software Quality Assurance (SQA) and Test Automation. I bridge reliable software testing with advanced robotics, with hands-on experience building automated testing frameworks and ROS 2-based robotic systems.
           </p>
 
           <div class="about-info">
             <div class="info-item">
               <span class="info-label" data-en="Name" data-ar="الاسم">Name</span>
-              <span class="info-value">Ziad Mohamed</span>
+              <span class="info-value" data-en="Ziad Mohamed" data-ar="زياد محمد (بشمهندس)">Ziad Mohamed</span>
             </div>
             <div class="info-item">
-              <span class="info-label" data-en="Field" data-ar="المجال">Field</span>
-              <span class="info-value" data-en="Software Testing Automation / Robotics &amp; Mechatronics" data-ar="أتمتة اختبار البرمجيات / الروبوتات والميكاترونكس">Software Testing Automation / Robotics &amp; Mechatronics</span>
+              <span class="info-label" data-en="Role" data-ar="الوظيفة">Role</span>
+              <span class="info-value" data-en="SQA Engineer &amp; Robotics Developer" data-ar="مهندس ضمان جودة ومطور روبوتات">SQA Engineer &amp; Robotics Developer</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" data-en="Education" data-ar="المؤهل">Education</span>
+              <span class="info-value" data-en="B.Sc. Undergraduate — Helwan National University" data-ar="طالب بكالوريوس — جامعة حلوان الأهلية">B.Sc. Undergraduate — Helwan National University</span>
             </div>
             <div class="info-item">
               <span class="info-label" data-en="Location" data-ar="الموقع">Location</span>
@@ -120,53 +318,25 @@
           <div class="skill-category">
             <div class="skill-category-header">
               <i class="fa-solid fa-vial"></i>
-              <h3 data-en="SQA &amp; Automation" data-ar="ضمان الجودة والأتمتة">SQA &amp; Automation</h3>
+              <h3 data-en="SQA &amp; Test Automation" data-ar="ضمان الجودة وأتمتة الاختبار">SQA &amp; Test Automation</h3>
             </div>
             <ul class="skill-list">
+              <li>SQA</li>
               <li>Selenium</li>
               <li>Appium</li>
               <li>PyTest</li>
-              <li>JUnit</li>
-              <li>POM</li>
-              <li data-en="API Testing" data-ar="اختبار الـ API">API Testing</li>
             </ul>
           </div>
 
           <div class="skill-category">
             <div class="skill-category-header">
               <i class="fa-solid fa-robot"></i>
-              <h3 data-en="Robotics &amp; Development" data-ar="الروبوتات والتطوير">Robotics &amp; Development</h3>
+              <h3 data-en="Robotics &amp; Programming" data-ar="الروبوتات والبرمجة">Robotics &amp; Programming</h3>
             </div>
             <ul class="skill-list">
-              <li>ROS 2 Jazzy</li>
-              <li>Nav2</li>
-              <li>Gazebo</li>
-              <li>micro-ROS</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <div class="skill-category-header">
-              <i class="fa-solid fa-code"></i>
-              <h3 data-en="Languages" data-ar="لغات البرمجة">Languages</h3>
-            </div>
-            <ul class="skill-list">
-              <li>Python</li>
+              <li>ROS 2</li>
               <li>C++</li>
-              <li>Java</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <div class="skill-category-header">
-              <i class="fa-solid fa-toolbox"></i>
-              <h3 data-en="Tools &amp; Hardware" data-ar="الأدوات والأجهزة">Tools &amp; Hardware</h3>
-            </div>
-            <ul class="skill-list">
-              <li data-en="Linux (Ubuntu)" data-ar="لينكس (أوبونتو)">Linux (Ubuntu)</li>
-              <li>Git</li>
-              <li>ESP32</li>
-              <li>Raspberry Pi</li>
+              <li>Python</li>
             </ul>
           </div>
         </div>
@@ -180,30 +350,34 @@
 
         <div class="projects-grid">
           <article class="project-card">
-            <div class="project-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            <h3 class="project-title" data-en="Landmine-Detection Robot" data-ar="روبوت كشف الألغام">Landmine-Detection Robot</h3>
-            <p class="project-subtitle" data-en="Minesweepers Competition" data-ar="مسابقة Minesweepers">Minesweepers Competition</p>
-            <p class="project-desc"
-               data-en="Designed the software architecture and led the mapping &amp; navigation stack for an autonomous mine-detection robot."
-               data-ar="صممت البنية البرمجية وقدت منظومة رسم الخرائط والملاحة لروبوت ذاتي القيادة لكشف الألغام.">
-              Designed the software architecture and led the mapping &amp; navigation stack for an autonomous mine-detection robot.
-            </p>
-            <div class="project-tags">
-              <span>ROS 2</span>
-              <span>Nav2</span>
-              <span data-en="Software Architecture" data-ar="بنية برمجية">Software Architecture</span>
-            </div>
-          </article>
-
-          <article class="project-card">
             <div class="project-icon"><i class="fa-solid fa-car-side"></i></div>
-            <h3 class="project-title" data-en="MechaTech RC Car" data-ar="سيارة MechaTech بالتحكم عن بُعد">MechaTech RC Car</h3>
-            <p class="project-subtitle" data-en="Team Project" data-ar="مشروع جماعي">Team Project</p>
+            <h3 class="project-title" data-en="MechaTech Robot" data-ar="روبوت MechaTech">MechaTech Robot</h3>
+            <p class="project-subtitle" data-en="Team Project — 4WD Robotic Chassis" data-ar="مشروع جماعي — شاسيه روبوتي بدفع رباعي">Team Project — 4WD Robotic Chassis</p>
+
+            <div class="project-gallery">
+              <figure class="project-media">
+                <a href="#lightbox-robot-1" class="lightbox-trigger" aria-label="Open photo: MechaTech chassis, four-wheel drive">
+                  <img src="assets/images/projects/robot-1.jpg" alt="MechaTech robot chassis with red wheel hubs and off-road tires, photographed on a marble hall floor" width="720" height="1280" loading="lazy" decoding="async">
+                  <span class="media-hint" aria-hidden="true"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                </a>
+                <figcaption data-en="Completed 4WD chassis" data-ar="الشاسيه المكتمل — دفع رباعي">Completed 4WD chassis</figcaption>
+              </figure>
+
+              <figure class="project-media">
+                <a href="#lightbox-robot-2" class="lightbox-trigger" aria-label="Open photo: MechaTech engraving on the robot deck">
+                  <img src="assets/images/projects/robot-2.jpg" alt="MechaTech robot from the front, with the team name engraved into the black deck" width="720" height="1280" loading="lazy" decoding="async">
+                  <span class="media-hint" aria-hidden="true"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                </a>
+                <figcaption data-en="Team engraving on the deck" data-ar="نقش MechaTech على جسم الروبوت">Team engraving on the deck</figcaption>
+              </figure>
+            </div>
+
             <p class="project-desc"
-               data-en="Led the team and handled hardware integration for a remote-controlled robotics car."
-               data-ar="قدت الفريق وتوليت تكامل الأجهزة لسيارة روبوتية تعمل بالتحكم عن بُعد.">
-              Led the team and handled hardware integration for a remote-controlled robotics car.
+               data-en="Led the team and handled hardware integration for a four-wheel-drive remote-controlled robot: fabricated the black steel deck-and-skirt chassis, mounted the drivetrain and off-road wheels, and prepared the mounting deck for sensors and control electronics."
+               data-ar="قدت الفريق وتوليت تكامل الأجهزة لروبوت دفع رباعي يعمل بالتحكم عن بُعد: صُنِّع هيكل Steel الأسود بالدرج والسكِّرت، وثُبِّتت منظومة الحركة والإطارات الوعرة، وجهِّزت منصة التركيب لأجهزة الاستشعار ودوائر التحكم.">
+              Led the team and handled hardware integration for a four-wheel-drive remote-controlled robot: fabricated the black steel deck-and-skirt chassis, mounted the drivetrain and off-road wheels, and prepared the mounting deck for sensors and control electronics.
             </p>
+
             <div class="project-tags">
               <span data-en="Team Lead" data-ar="قائد فريق">Team Lead</span>
               <span data-en="Hardware Integration" data-ar="تكامل الأجهزة">Hardware Integration</span>
@@ -211,6 +385,25 @@
             </div>
           </article>
         </div>
+      </div>
+
+      <!-- CSS-only lightbox overlays (no JS required) -->
+      <div class="lightbox" id="lightbox-robot-1" tabindex="-1" role="dialog" aria-modal="false" aria-label="Enlarged photo: MechaTech chassis">
+        <a class="lightbox-backdrop" href="#projects" aria-label="Close photo"></a>
+        <figure>
+          <img src="assets/images/projects/robot-1.jpg" alt="MechaTech robot chassis with red wheel hubs and off-road tires, photographed on a marble hall floor" width="720" height="1280">
+          <figcaption data-en="MechaTech — completed 4WD chassis" data-ar="MechaTech — الشاسيه المكتمل بدفع رباعي">MechaTech — completed 4WD chassis</figcaption>
+        </figure>
+        <a class="lightbox-close" href="#projects" aria-label="Close photo">&times;</a>
+      </div>
+
+      <div class="lightbox" id="lightbox-robot-2" tabindex="-1" role="dialog" aria-modal="false" aria-label="Enlarged photo: MechaTech engraving">
+        <a class="lightbox-backdrop" href="#projects" aria-label="Close photo"></a>
+        <figure>
+          <img src="assets/images/projects/robot-2.jpg" alt="MechaTech robot from the front, with the team name engraved into the black deck" width="720" height="1280">
+          <figcaption data-en="MechaTech — team engraving on the deck" data-ar="MechaTech — نقش الفريق على جسم الروبوت">MechaTech — team engraving on the deck</figcaption>
+        </figure>
+        <a class="lightbox-close" href="#projects" aria-label="Close photo">&times;</a>
       </div>
     </section>
 
@@ -223,16 +416,8 @@
           <div class="timeline-item">
             <div class="timeline-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <div class="timeline-content">
-              <h3 data-en="B.Sc. in Robotics &amp; Mechatronics Engineering" data-ar="بكالوريوس هندسة الروبوتات والميكاترونكس">B.Sc. in Robotics &amp; Mechatronics Engineering</h3>
+              <h3 data-en="B.Sc. in Robotics &amp; Mechatronics Engineering (Undergraduate)" data-ar="بكالوريوس هندسة الروبوتات والميكاترونكس (طالب)">B.Sc. in Robotics &amp; Mechatronics Engineering (Undergraduate)</h3>
               <p class="timeline-place" data-en="Helwan National University" data-ar="جامعة حلوان الأهلية">Helwan National University</p>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fa-solid fa-certificate"></i></div>
-            <div class="timeline-content">
-              <h3 data-en="Software Tester Track" data-ar="مسار اختبار البرمجيات">Software Tester Track</h3>
-              <p class="timeline-place" data-en="DEPI (Digital Egypt Pioneers Initiative)" data-ar="DEPI (مبادرة رواد مصر الرقمية)">DEPI (Digital Egypt Pioneers Initiative)</p>
             </div>
           </div>
         </div>
@@ -260,11 +445,19 @@
               </div>
             </a>
 
-            <a href="https://www.linkedin.com/in/ziad-mohamed-elshahat" target="_blank" rel="noopener noreferrer" class="contact-item">
+            <a href="https://linkedin.com/in/ziad-mohamed-elshahat" target="_blank" rel="noopener noreferrer" class="contact-item">
               <i class="fa-brands fa-linkedin-in"></i>
               <div>
                 <span class="contact-label" data-en="LinkedIn" data-ar="لينكدإن">LinkedIn</span>
                 <span class="contact-value">linkedin.com/in/ziad-mohamed-elshahat</span>
+              </div>
+            </a>
+
+            <a href="https://github.com/ziadmohamedx123/my-portfolio" target="_blank" rel="noopener noreferrer" class="contact-item">
+              <i class="fa-brands fa-github"></i>
+              <div>
+                <span class="contact-label">GitHub</span>
+                <span class="contact-value">github.com/ziadmohamedx123/my-portfolio</span>
               </div>
             </a>
 
@@ -280,11 +473,11 @@
           <form class="contact-form" id="contact-form">
             <div class="form-group">
               <label for="name" data-en="Your Name" data-ar="اسمك">Your Name</label>
-              <input type="text" id="name" name="name" required>
+              <input type="text" id="name" name="name" autocomplete="name" required>
             </div>
             <div class="form-group">
               <label for="email" data-en="Your Email" data-ar="بريدك الإلكتروني">Your Email</label>
-              <input type="email" id="email" name="email" required>
+              <input type="email" id="email" name="email" autocomplete="email" required>
             </div>
             <div class="form-group">
               <label for="message" data-en="Your Message" data-ar="رسالتك">Your Message</label>
@@ -305,7 +498,15 @@
     </div>
   </footer>
 
-  <!-- Custom script (Step 3) -->
+  <!-- Progressive enhancement: let Escape dismiss the CSS lightbox. Zero coupling with script.js. -->
+  <script>
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && /^#lightbox-/.test(window.location.hash)) {
+        window.location.hash = '#projects';
+      }
+    });
+  </script>
+
   <script src="script.js" defer></script>
 </body>
 </html>
